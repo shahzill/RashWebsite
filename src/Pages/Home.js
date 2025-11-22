@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../Styles/Home.css";
 
 const Home = () => {
-  const [customItems, setCustomItems] = useState([]);
   const [selectedBox, setSelectedBox] = useState(null);
+  const [showPopup, setShowPopup] = useState(true);
 
   const boxOptions = {
     cleaning: {
@@ -17,7 +17,7 @@ const Home = () => {
         "Sponges",
         "Trash bags",
       ],
-      price: "$29.99",
+      price: "$149.99",
     },
     kitchen: {
       name: "Kitchen Box",
@@ -30,43 +30,46 @@ const Home = () => {
         "Aluminum foil",
         "Food storage containers",
       ],
-      price: "$34.99",
-    },
-    custom: {
-      name: "Make Your Own Box",
-      icon: "🎨",
-      items: [],
-      price: "Custom",
+      price: "$319.99",
     },
   };
 
-  const availableItems = [
-    { name: "Bubble wrap", icon: "🫧" },
-    { name: "Packing tape", icon: "📏" },
-    { name: "Markers", icon: "🖊️" },
-    { name: "Box cutter", icon: "🔪" },
-    { name: "Moving blankets", icon: "🛏️" },
-    { name: "Furniture sliders", icon: "⬇️" },
-    { name: "Tool kit", icon: "🛠️" },
-    { name: "First aid kit", icon: "🩹" },
-    { name: "Snacks & water", icon: "💧" },
-    { name: "Label stickers", icon: "🏷️" },
-    { name: "Box seals", icon: "✉️" },
-    { name: "Gloves", icon: "🧤" },
-  ];
+  // Close popup when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showPopup && event.target.classList.contains("popup-overlay")) {
+        setShowPopup(false);
+      }
+    };
 
-  const addToCustomBox = (item) => {
-    if (!customItems.some((i) => i.name === item.name)) {
-      setCustomItems([...customItems, item]);
-    }
-  };
-
-  const removeFromCustomBox = (item) => {
-    setCustomItems(customItems.filter((i) => i.name !== item.name));
-  };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [showPopup]);
 
   return (
     <div className="home light-theme">
+      {/* Email Signup Popup */}
+      {showPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <button className="popup-close" onClick={() => setShowPopup(false)}>
+              ✕
+            </button>
+            <div className="popup-content">
+              <h3>🎉 Get 10% Off Your First Order!</h3>
+              <p>Sign up for our newsletter and receive a 10% discount code</p>
+              <div className="popup-form">
+                <input type="email" placeholder="Enter your email" />
+                <button className="btn-primary">Get My Discount</button>
+              </div>
+              <p className="popup-note">No spam, unsubscribe at any time</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Navigation */}
       <nav className="navbar">
         <div className="nav-container">
@@ -97,14 +100,14 @@ const Home = () => {
       <section id="home" className="hero">
         <div className="hero-content">
           <div className="hero-badge">
-            <span>Stress-Free Moving</span>
+            <span>Stress-Free Moving • Free Shipping</span>
           </div>
           <h1>
             Move <span className="highlight">Smarter</span> with PicknMove
           </h1>
           <p>
             Custom moving boxes delivered to your door. Choose from our curated
-            boxes or build your own with exactly what you need for a perfect
+            boxes with <strong>free shipping included</strong> for a perfect
             move.
           </p>
           <div className="hero-buttons">
@@ -118,13 +121,13 @@ const Home = () => {
           </div>
           <div className="hero-features">
             <div className="feature">
-              <span>Free Delivery</span>
+              <span>🚚 Free Shipping</span>
             </div>
             <div className="feature">
-              <span>5-Star Rated</span>
+              <span>⭐ 5-Star Rated</span>
             </div>
             <div className="feature">
-              <span>Premium Quality</span>
+              <span>🎯 Premium Quality</span>
             </div>
           </div>
         </div>
@@ -139,8 +142,8 @@ const Home = () => {
               <span className="accent-text">Moving Box</span>
             </h2>
             <p className="section-subtitle">
-              Select a pre-made box or create your custom moving kit with our
-              easy builder
+              Select from our premium moving boxes with{" "}
+              <strong>free shipping included</strong>
             </p>
           </div>
 
@@ -158,6 +161,7 @@ const Home = () => {
               </div>
               <h3>{boxOptions.cleaning.name}</h3>
               <p className="box-price">{boxOptions.cleaning.price}</p>
+              <div className="shipping-badge">🚚 Free Shipping</div>
               <ul className="box-items">
                 {boxOptions.cleaning.items.map((item, index) => (
                   <li key={index}>
@@ -181,6 +185,7 @@ const Home = () => {
               </div>
               <h3>{boxOptions.kitchen.name}</h3>
               <p className="box-price">{boxOptions.kitchen.price}</p>
+              <div className="shipping-badge">🚚 Free Shipping</div>
               <ul className="box-items">
                 {boxOptions.kitchen.items.map((item, index) => (
                   <li key={index}>
@@ -190,83 +195,26 @@ const Home = () => {
               </ul>
               <button className="btn-primary">🛒 Select This Box</button>
             </div>
+          </div>
 
-            {/* Custom Box */}
-            <div
-              className={`box-option custom-box ${
-                selectedBox === "custom" ? "selected" : ""
-              }`}
-              onClick={() => setSelectedBox("custom")}
-            >
-              <div className="box-header">
-                <div className="box-icon">{boxOptions.custom.icon}</div>
-                <div className="box-badge">🎯 Fully Custom</div>
+          {/* Bundle Offer */}
+          <div className="bundle-offer">
+            <div className="bundle-content">
+              <div className="bundle-icons">
+                <div className="box-icon">{boxOptions.cleaning.icon}</div>
+                <div className="plus-icon">+</div>
+                <div className="box-icon">{boxOptions.kitchen.icon}</div>
+                <div className="equals-icon">=</div>
+                <div className="free-icon">🛠️ FREE!</div>
               </div>
-              <h3>{boxOptions.custom.name}</h3>
-              <p className="box-price">Custom Price</p>
-
-              {/* Selected Items */}
-              <div className="selected-items">
-                <h4>📋 Your Items ({customItems.length})</h4>
-                {customItems.length > 0 ? (
-                  <div className="custom-items-list">
-                    {customItems.map((item, index) => (
-                      <div key={index} className="custom-item">
-                        <span>
-                          {item.icon} {item.name}
-                        </span>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            removeFromCustomBox(item);
-                          }}
-                          className="remove-btn"
-                        >
-                          ❌
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="empty-message">
-                    Tap items below to add to your box ✨
-                  </p>
-                )}
+              <div className="bundle-text">
+                <h3>Get Our Premium Tool Box FREE!</h3>
+                <p>
+                  Purchase both the Cleaning Box and Kitchen Box together and
+                  receive our Premium Tool Box ($79.99 value) absolutely free!
+                </p>
+                <button className="btn-primary">🎁 Get This Bundle Deal</button>
               </div>
-
-              {/* Available Items */}
-              <div className="available-items">
-                <h4>📦 Available Items</h4>
-                <div className="items-grid">
-                  {availableItems.map((item, index) => (
-                    <div
-                      key={index}
-                      className={`item-tag ${
-                        customItems.some((i) => i.name === item.name)
-                          ? "added"
-                          : ""
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCustomBox(item);
-                      }}
-                    >
-                      <span className="item-icon">{item.icon}</span>
-                      <span className="item-name">{item.name}</span>
-                      {customItems.some((i) => i.name === item.name) && (
-                        <span className="checkmark">✅</span>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <button
-                className="btn-primary"
-                disabled={customItems.length === 0}
-              >
-                🎨 Create Custom Box (${(customItems.length * 4.99).toFixed(2)})
-              </button>
             </div>
           </div>
         </div>
@@ -280,7 +228,7 @@ const Home = () => {
               How <span className="accent-text">PicknMove</span> Works
             </h2>
             <p className="section-subtitle">
-              Simple steps to your stress-free move
+              Simple steps to your stress-free move with free shipping
             </p>
           </div>
           <div className="steps-grid">
@@ -289,17 +237,17 @@ const Home = () => {
               <div className="step-number">01</div>
               <h3>Choose Your Box</h3>
               <p>
-                Select from our curated boxes or create your custom moving kit
-                with our easy builder
+                Select from our premium moving boxes - all include free shipping
+                to your door
               </p>
             </div>
             <div className="step">
               <div className="step-icon">2️⃣</div>
               <div className="step-number">02</div>
-              <h3>We Pack & Deliver</h3>
+              <h3>We Pack & Deliver Free</h3>
               <p>
                 We carefully pack your selected items and deliver everything to
-                your door within 24 hours
+                your door with free shipping
               </p>
             </div>
             <div className="step">
@@ -340,8 +288,8 @@ const Home = () => {
                 <span>Customer Rating</span>
               </div>
               <div className="stat">
-                <strong>24/7</strong>
-                <span>Support</span>
+                <strong>🚚 Free</strong>
+                <span>Shipping</span>
               </div>
             </div>
           </div>
@@ -358,7 +306,8 @@ const Home = () => {
                 <h3>PicknMove</h3>
               </div>
               <p>
-                Your custom moving box solution. Move smarter, not harder. 🎯
+                Your custom moving box solution with free shipping. Move
+                smarter, not harder. 🎯
               </p>
               <div className="social-links">
                 <span>📘</span>
@@ -384,10 +333,7 @@ const Home = () => {
                   <a href="#boxes">🔪 Kitchen Box</a>
                 </li>
                 <li>
-                  <a href="#boxes">🎨 Custom Box</a>
-                </li>
-                <li>
-                  <a href="#boxes">🎁 All Boxes</a>
+                  <a href="#boxes">🎁 Bundle Deal</a>
                 </li>
               </ul>
             </div>
@@ -404,7 +350,7 @@ const Home = () => {
                   <a href="#services">Setup Service</a>
                 </li>
                 <li>
-                  <a href="#services">Storage Solutions</a>
+                  <a href="#services">Free Shipping</a>
                 </li>
               </ul>
             </div>
